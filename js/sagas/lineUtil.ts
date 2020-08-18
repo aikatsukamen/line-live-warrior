@@ -1,6 +1,6 @@
 import { EventEmitter } from 'events';
-import axios from 'axios';
-import { sleep } from './common';
+// import axios from 'axios';
+import { sleep, fetchJsonp } from './common';
 
 export type Channel = {
   /** ステータスコード。正常時200が返ってくるっぽい。 */
@@ -127,15 +127,16 @@ export type EventRanking = {
 
 export const fetchChannel = async (channelId: number) => {
   const url = `https://live-api.line-apps.com/web/v4.0/channel/${channelId}`;
-  const result: Channel = (await axios.get(url)).data;
+  // const result: Channel = (await axios.get(url)).data;
+  const result = JSON.parse((await fetchJsonp(url)).data.htmlStr) as Channel;
 
   return result;
 };
 
 export const fetchEventRanking = async (eventId: number) => {
   const url = `https://live-api.line-apps.com/web/v3.7/events/${eventId}/ranking`;
-  const result: EventRanking = (await axios.get(url)).data;
-
+  // const result: EventRanking = (await axios.get(url)).data;
+  const result = JSON.parse((await fetchJsonp(url)).data.htmlStr) as EventRanking;
   return result.rows;
 };
 
@@ -157,7 +158,7 @@ export class LineLiveComment extends EventEmitter {
 
     // 動画ID取得
     const url = `https://live-api.line-apps.com/web/v4.0/channel/${this.channelId}`;
-    const result: Channel = (await axios.get(url)).data;
+    const result = JSON.parse((await fetchJsonp(url)).data.htmlStr) as Channel; //(await axios.get(url)).data;
     if (result.isBroadcastingNow) {
       this.broadcastId = result.liveBroadcasts.rows[0].id;
       this.emit('open', {
@@ -173,7 +174,7 @@ export class LineLiveComment extends EventEmitter {
 
   private chatStart = async () => {
     const url = `https://live-api.line-apps.com/web/v4.0/channel/${this.channelId}/broadcast/${this.broadcastId}`;
-    const result: Broadcast = (await axios.get(url)).data;
+    const result = JSON.parse((await fetchJsonp(url)).data.htmlStr) as Broadcast; //(await axios.get(url)).data;
     this.socket = new WebSocket(result.chat.url);
     this.socket.onerror = (event) => {
       console.error('WebSocketでエラー');

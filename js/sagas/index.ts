@@ -1,13 +1,11 @@
 import { fork, select, call, put, take, takeEvery, race } from 'redux-saga/effects';
 import * as actions from '../actions';
-import { confirmSaga } from './dialog';
-import { RootState } from '../reducers';
 import { LineLiveComment, GiftMessage, fetchChannel, fetchEventRanking } from './lineUtil';
-import { eventChannel, END } from 'redux-saga';
+import { eventChannel } from 'redux-saga';
 
 export default function* rootSaga() {
   yield call(fetchRanking);
-  yield fork(setGeneratorFuncInterval, fetchRanking, 30 * 1000);
+  yield fork(setGeneratorFuncInterval, fetchRanking, 60 * 1000);
   // yield call(addChannel);
   yield takeEvery(actions.addChannelById, addChannel);
 }

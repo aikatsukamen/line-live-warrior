@@ -23,9 +23,10 @@ export const fetchJson = async (url: string) => {
  * JSONPの取得
  * @param url URL
  */
-export function fetchJsonp(url: string): Promise<{ data: object }> {
+export function fetchJsonp(url: string): Promise<{ data: { htmlStr: string; status: string; url: string } }> {
+  const newUrl = `https://script.google.com/macros/s/AKfycbyGqtJYxOIgvFgYW-xZRW4ZGQAfwPunJGzm6WwiCetbI56CGJWh/exec?url=${encodeURIComponent(url)}`;
   return new Promise((resolve, reject) => {
-    fetchJsonpLib(url, {
+    fetchJsonpLib(newUrl, {
       jsonpCallback: 'callback',
     })
       .then((response) => {
