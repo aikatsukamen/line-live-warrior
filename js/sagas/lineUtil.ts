@@ -167,7 +167,7 @@ export class LineLiveComment extends EventEmitter {
       });
       this.chatStart();
     } else {
-      await sleep(5000);
+      await sleep(60 * 1000);
       this.broadcastPolling();
     }
   };
